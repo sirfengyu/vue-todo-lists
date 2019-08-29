@@ -9,7 +9,7 @@
         </a>
         <a class=" link-list-new" @click="addTodoList">
             <!--新增菜单-->
-            <span class="icon-plus" ></span> 新增
+            <span class="icon-plus"></span> 新增
         </a>
     </div>
 </template>
@@ -17,7 +17,8 @@
 <script>
     import {
         mapState,
-        mapMutations
+        mapMutations,
+        mapActions
     } from 'vuex'
     export default {
         data() { //data函数
@@ -38,7 +39,7 @@
                 },
                 set: function(value) {
                     // this.setActiveTodoId(value)
-                    this.$store.commit('setActiveTodoId',value)
+                    this.$store.commit('setActiveTodoId', value)
                 }
             },
             todoList: {
@@ -46,28 +47,50 @@
                     return this.$store.state.todoList;
                 }
             },
+            todo: {
+                get: function() {
+                    return this.$store.state.todo;
+                },
+                set: function(value) {
+                    this.setTodo(value)
+                }
+            }
         },
         methods: {
             ...mapMutations([
-                'setActiveTodoId',
-                'addTodo'
+                'setActiveTodoId'
             ]),
             clickMenu(id) {
                 this.activeTodoId = id
             },
             addTodoList() {
-                this.addTodo({
-                    id: 'todo-undifine',  //单条待办项唯一标示
-                    title: '未命名', // 标题
-                    count: 0,  // 未完成待办项数目
-                    isDelete: false, // 是否删除(物理删除)
-                    locked: false, // 是否锁定
-                    record: []
-                });
-                this.activeTodoId = 'todo-undifine'
+                this.addTodoAction().then(res => {
+                    this.activeTodoId = res.data.id
+                })
+            },
+            init() {
+               this.getTodoListAction().then(res => {
+                    this.getTodoAction().then(res => {})
+                }).catch(err => {
+                    console.log(err);
+                })
+                this.isUpdate = false
+            },
+            ...mapActions([
+                'getTodoListAction',
+                'getTodoAction',
+                'addTodoAction',
+            ])
+        },
+        created() {
+            this.init()
+        },
+        watch: {
+            activeTodoId: function() {
+                // this.init()
             }
         }
-    };
+    }
 </script>
 
 <style lang="less">

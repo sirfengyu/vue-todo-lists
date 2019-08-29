@@ -3,7 +3,7 @@
         <div class="list-item editingClass editing" :class="{checked: item.checked}" v-if="item.isDelete != true">
             <!-- 最外层容器-->
             <label class="checkbox"> <!--自定义的多选框-->
-                <input type="checkbox" v-model="item.checked"> <!--item.checked-->
+                <input type="checkbox" v-model="item.checked" @change="onChange"> <!--item.checked-->
                 <span class="checkbox-custom"></span>
             </label>
             <input type="text" autofocus v-model.lazy="item.text" placeholder='写点什么。。。' @change="onChange" :disabled="item.checked || locked">
@@ -28,6 +28,7 @@
         },
         methods: {
             deleteRecord() {
+                this.item.isDelete = true
                 this.$emit('deleteRecordEvent', this.item)
             },
             onChange() {
